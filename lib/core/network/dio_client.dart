@@ -1,4 +1,5 @@
 import 'package:clean_architecture/core/constants/api_urls.dart';
+import 'package:clean_architecture/core/error/failure.dart';
 import 'package:clean_architecture/core/network/inspector.dart';
 import 'package:dio/dio.dart';
 
@@ -93,29 +94,24 @@ class DioClient {
     try {
       return await request();
     } on DioException catch (e) {
-      throw DioException(
-        requestOptions: e.requestOptions,
-        response: e.response,
-        type: e.type,
-        error: e.error,
-        message: _handleDioError(e),
-      );
+      throw dioExceptionToFailure(e);
     }
   }
 
-  String _handleDioError(DioException e) {
+  Failure dioExceptionToFailure(DioException e) {
     switch (e.type) {
-      case DioExceptionType.connectionTimeout:
-      case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        return "Request timeout, please try again.";
+        return NetworkFailure("Request timeout, please try again.");
       case DioExceptionType.badResponse:
-        return "Received an invalid response: ${e.response?.statusCode}";
+        return ApiFailure(
+          e.response?.statusCode ?? 500,
+          "Received an invalid response: ${e.response?.statusCode}",
+        );
       case DioExceptionType.cancel:
-        return "Request was cancelled.";
+        return UnknownFailure("Request was cancelled.");
       case DioExceptionType.unknown:
       default:
-        return "Something went wrong. Please check your internet connection.";
+        return UnknownFailure("Something went wrong. Please check your internet connection.");
     }
   }
 }

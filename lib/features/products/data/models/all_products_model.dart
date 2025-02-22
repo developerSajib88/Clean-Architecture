@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:clean_architecture/features/products/data/models/product_model.dart';
+import 'package:clean_architecture/features/products/domain/entities/all_products_entity.dart';
 
 class AllProductsModel {
   final List<ProductModel>? products;
@@ -49,4 +50,13 @@ class AllProductsModel {
     "skip": skip,
     "limit": limit,
   };
+
+
+  ProductsEntity toEntity()=> ProductsEntity(
+    products: products,
+    total: total,
+    skip: skip,
+    limit: limit
+  );
+
 }
