@@ -1,0 +1,121 @@
+import 'package:clean_architecture/core/constants/api_urls.dart';
+import 'package:clean_architecture/core/network/inspector.dart';
+import 'package:dio/dio.dart';
+
+class DioClient {
+  final Dio _dio;
+
+  DioClient()
+      : _dio = Dio(
+    BaseOptions(
+      baseUrl: ApiUrls.baseURL,
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      responseType: ResponseType.json,
+      sendTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+    ),
+  )..interceptors.addAll([
+    LoggerInterceptor(),
+  ]);
+
+  Future<Response<T>> get<T>(
+      String url, {
+        Map<String, dynamic>? queryParameters,
+        Options? options,
+        CancelToken? cancelToken,
+        ProgressCallback? onReceiveProgress,
+      }) async {
+    return _handleRequest(() => _dio.get<T>(
+      url,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+      onReceiveProgress: onReceiveProgress,
+    ));
+  }
+
+  Future<Response<T>> post<T>(
+      String url, {
+        dynamic data,
+        Map<String, dynamic>? queryParameters,
+        Options? options,
+        ProgressCallback? onSendProgress,
+        ProgressCallback? onReceiveProgress,
+      }) async {
+    return _handleRequest(() => _dio.post<T>(
+      url,
+      data: data,
+      options: options,
+      queryParameters: queryParameters,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    ));
+  }
+
+  Future<Response<T>> put<T>(
+      String url, {
+        dynamic data,
+        Map<String, dynamic>? queryParameters,
+        Options? options,
+        CancelToken? cancelToken,
+        ProgressCallback? onSendProgress,
+        ProgressCallback? onReceiveProgress,
+      }) async {
+    return _handleRequest(() => _dio.put<T>(
+      url,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    ));
+  }
+
+  Future<T> delete<T>(
+      String url, {
+        dynamic data,
+        Map<String, dynamic>? queryParameters,
+        Options? options,
+        CancelToken? cancelToken,
+      }) async {
+    final response = await _handleRequest(() => _dio.delete<T>(
+      url,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+    ));
+    return response.data!;
+  }
+
+  Future<Response<T>> _handleRequest<T>(Future<Response<T>> Function() request) async {
+    try {
+      return await request();
+    } on DioException catch (e) {
+      throw DioException(
+        requestOptions: e.requestOptions,
+        response: e.response,
+        type: e.type,
+        error: e.error,
+        message: _handleDioError(e),
+      );
+    }
+  }
+
+  String _handleDioError(DioException e) {
+    switch (e.type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+        return "Request timeout, please try again.";
+      case DioExceptionType.badResponse:
+        return "Received an invalid response: ${e.response?.statusCode}";
+      case DioExceptionType.cancel:
+        return "Request was cancelled.";
+      case DioExceptionType.unknown:
+      default:
+        return "Something went wrong. Please check your internet connection.";
+    }
+  }
+}
