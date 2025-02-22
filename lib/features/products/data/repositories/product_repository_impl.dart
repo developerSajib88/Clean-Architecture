@@ -2,6 +2,7 @@ import 'package:clean_architecture/features/products/domain/repositories/product
 import 'package:dartz/dartz.dart';
 
 class ProductRepositoryImpl implements ProductRepository{
+
   @override
   Future<Either> getAllProducts() {
     // TODO: implement getAllProducts
