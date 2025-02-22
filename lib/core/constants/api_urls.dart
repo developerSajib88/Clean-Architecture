@@ -6,9 +6,10 @@ class ApiUrls {
 
   // Products Endpoints
   static String allProducts = "/products";
-  static String searchProducts = "/products/";
+  static String searchProducts = "/products/search?q=";
 
   // Public getter to access the base URL
   static String get baseURL => _baseURL;
 
 }
+
