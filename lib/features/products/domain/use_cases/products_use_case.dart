@@ -5,9 +5,9 @@ import 'package:clean_architecture/features/products/domain/entities/all_product
 import 'package:clean_architecture/features/products/domain/repositories/product_repository.dart';
 import 'package:dartz/dartz.dart';
 
-class ProductsUseCase extends UseCase<Either<Failure,ProductsEntity>,dynamic>{
+class ProductsUseCase extends UseCase<ProductsEntity, dynamic> {
   @override
-  Future<Either<Failure, ProductsEntity>> call({params})async=>
-      await sl<ProductRepository>().getAllProducts();
-
+  Future<Either<Failure, ProductsEntity>> call({params}) {
+    return sl<ProductRepository>().getAllProducts();
+  }
 }
