@@ -14,7 +14,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   Future<void> fetchProducts(
       ProductEvent event, Emitter<ProductState> emit) async {
     emit(ProductLoading());
-    final result = await sl<ProductsUseCase>().call();
+    var result = await sl<ProductsUseCase>().call();
+    print(
+        "##############################${result}#############################################");
     result.fold((error) => emit(ProductFailure(message: error.message)),
         (data) => emit(ProductLoaded(productsEntity: data)));
   }

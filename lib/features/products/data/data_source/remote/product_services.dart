@@ -7,34 +7,37 @@ import 'package:clean_architecture/features/products/domain/entities/all_product
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 
-abstract class ProductService{
-  Future<Either<Failure,ProductsEntity>> fetchAllProducts();
-  Future<Either<Failure,ProductsEntity>> searchProduct({required String query});
+abstract class ProductService {
+  Future<Either<Failure, ProductsEntity>> fetchAllProducts();
+  Future<Either<Failure, ProductsEntity>> searchProduct(
+      {required String query});
 }
 
-
-class ProductServiceImpl implements ProductService{
-
+class ProductServiceImpl implements ProductService {
   @override
-  Future<Either<Failure, ProductsEntity>> fetchAllProducts()async{
-    try{
+  Future<Either<Failure, ProductsEntity>> fetchAllProducts() async {
+    try {
       Response response = await sl<DioClient>().get(ApiUrls.allProducts);
-      ProductsEntity productsEntity = AllProductsModel.fromRawJson(response.data).toEntity();
+      ProductsEntity productsEntity =
+          AllProductsModel.fromRawJson(response.data).toEntity();
+      print(
+          ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>${productsEntity.products}");
       return Right(productsEntity);
-    } catch(error){
-        return Left(error as Failure);
+    } catch (error) {
+      return Left(error as Failure);
     }
   }
 
   @override
-  Future<Either<Failure, ProductsEntity>> searchProduct({required String query})async{
-    try{
-      Response response = await sl<DioClient>().get(
-        ApiUrls.searchProducts + query
-      );
-      ProductsEntity productsEntity = AllProductsModel.fromRawJson(response.data).toEntity();
+  Future<Either<Failure, ProductsEntity>> searchProduct(
+      {required String query}) async {
+    try {
+      Response response =
+          await sl<DioClient>().get(ApiUrls.searchProducts + query);
+      ProductsEntity productsEntity =
+          AllProductsModel.fromRawJson(response.data).toEntity();
       return Right(productsEntity);
-    }catch(error){
+    } catch (error) {
       return Left(error as Failure);
     }
   }

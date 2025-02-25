@@ -7,9 +7,7 @@ import 'package:dartz/dartz.dart';
 
 class ProductsUseCase extends UseCase<ProductsEntity, dynamic> {
   @override
-  Future<Either<Failure, ProductsEntity>> call({params}) {
-    return sl<ProductRepository>().getAllProducts();
+  Future<Either<Failure, ProductsEntity>> call({params}) async {
+    return await sl<ProductRepository>().getAllProducts();
   }
-
-  getAllProducts() {}
 }

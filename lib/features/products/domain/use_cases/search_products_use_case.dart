@@ -8,6 +8,8 @@ import 'package:dartz/dartz.dart';
 class SearchProductUseCase extends UseCase<ProductsEntity, String> {
   @override
   Future<Either<Failure, ProductsEntity>> call({String? params}) {
+    print(
+        "##############################Hello I am call#############################################");
     return sl<ProductRepository>().searchProducts(query: params!);
   }
 }
