@@ -10,4 +10,6 @@ class ProductsUseCase extends UseCase<ProductsEntity, dynamic> {
   Future<Either<Failure, ProductsEntity>> call({params}) {
     return sl<ProductRepository>().getAllProducts();
   }
+
+  getAllProducts() {}
 }
