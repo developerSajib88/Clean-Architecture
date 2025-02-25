@@ -15,8 +15,16 @@ class ProductItemView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text("Hello This is Title"),
-      subtitle: Text("This is subtitle"),
+      leading: Image.network(
+        image,
+        width: 100,
+        height: 100,
+      ),
+      title: Text(title),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [Text(subtitle), Text("Price: $price Tk")],
+      ),
     );
   }
 }
