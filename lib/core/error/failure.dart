@@ -26,7 +26,8 @@ class UnknownFailure extends Failure {
 class ApiFailure extends Failure {
   final int statusCode;
 
-  const ApiFailure(this.statusCode, [String message = 'API Failure']) : super(message);
+  const ApiFailure(this.statusCode, [String message = 'API Failure'])
+      : super(message);
 
   @override
   List<Object> get props => [statusCode, message];

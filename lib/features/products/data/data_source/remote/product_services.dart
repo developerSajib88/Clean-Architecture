@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:clean_architecture/core/constants/api_urls.dart';
 import 'package:clean_architecture/core/error/failure.dart';
 import 'package:clean_architecture/core/network/dio_client.dart';
@@ -19,12 +21,16 @@ class ProductServiceImpl implements ProductService {
     try {
       Response response = await sl<DioClient>().get(ApiUrls.allProducts);
       ProductsEntity productsEntity =
-          AllProductsModel.fromRawJson(response.data).toEntity();
-      print(
-          ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>${productsEntity.products}");
+          AllProductsModel.fromJson(response.data).toEntity();
       return Right(productsEntity);
-    } catch (error) {
-      return Left(error as Failure);
+    } on Failure catch (error) {
+      return Left(error);
+    } catch (error, stackTrace) {
+      log(
+          error: "ProductService Class:",
+          error.toString(),
+          stackTrace: stackTrace);
+      return Left(UnknownFailure(error.toString()));
     }
   }
 
@@ -35,10 +41,16 @@ class ProductServiceImpl implements ProductService {
       Response response =
           await sl<DioClient>().get(ApiUrls.searchProducts + query);
       ProductsEntity productsEntity =
-          AllProductsModel.fromRawJson(response.data).toEntity();
+          AllProductsModel.fromJson(response.data).toEntity();
       return Right(productsEntity);
-    } catch (error) {
-      return Left(error as Failure);
+    } on Failure catch (error) {
+      return Left(error);
+    } catch (error, stracTrace) {
+      log(
+          error: "ProductService Class:",
+          error.toString(),
+          stackTrace: stracTrace);
+      return Left(UnknownFailure(error.toString()));
     }
   }
 }
